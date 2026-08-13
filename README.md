@@ -26,29 +26,29 @@ The diagram below illustrates the developer workflow, automated GitHub Actions t
 
 ```mermaid
 graph TD
-    subgraph Developer Workflow
-        DEV[Developer Push to main]
+    subgraph DEV_FLOW["Developer Workflow"]
+        DEV["Developer Push to main"]
     end
 
-    subgraph CI/CD Quality Pipeline (GitHub Actions)
-        GA[GitHub Actions Runner]
-        LINT[1. Lint & Format Check<br/>flake8 / black]
-        TEST[2. Automated Unit & Integration Tests<br/>pytest --cov]
-        BUILD[3. Build Multi-Stage Docker Image]
-        GHCR[4. Push Image to GHCR<br/>ghcr.io]
+    subgraph CI_FLOW["CI/CD Quality Pipeline (GitHub Actions)"]
+        GA["GitHub Actions Runner"]
+        LINT["1. Lint & Format Check<br/>flake8 / black"]
+        TEST["2. Automated Unit & Integration Tests<br/>pytest --cov"]
+        BUILD["3. Build Multi-Stage Docker Image"]
+        GHCR["4. Push Image to GHCR<br/>ghcr.io"]
     end
 
-    subgraph Free Cloud Deployment (Render Blueprint)
-        RENDER[Render Cloud Service]
-        AUTO_DEPLOY[5. Git Auto-Deploy Trigger<br/>render.yaml]
-        CONTAINER[Docker Runtime Container<br/>SQLite Storage]
+    subgraph CLOUD_FLOW["Free Cloud Deployment (Render Blueprint)"]
+        RENDER["Render Cloud Service"]
+        AUTO_DEPLOY["5. Git Auto-Deploy Trigger<br/>render.yaml"]
+        CONTAINER["Docker Runtime Container<br/>SQLite Storage"]
     end
 
-    subgraph Application Layers
-        API[FastAPI Application<br/>uvicorn server]
-        METRICS[Prometheus Metrics Engine<br/>/metrics]
-        SERVICE[TaskManager Service Layer]
-        REPO[Repository Layer<br/>SQLite / In-Memory]
+    subgraph APP_FLOW["Application Layers"]
+        API["FastAPI Application<br/>uvicorn server"]
+        METRICS["Prometheus Metrics Engine<br/>/metrics"]
+        SERVICE["TaskManager Service Layer"]
+        REPO["Repository Layer<br/>SQLite / In-Memory"]
     end
 
     DEV --> GA
