@@ -17,3 +17,5 @@ scripts
 README.md
 Dockerfile
 docker-compose.yml
+cli_*
+cli_v2.22.0

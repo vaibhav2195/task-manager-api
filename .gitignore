@@ -35,3 +35,7 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+
+# Binaries / Render CLI
+cli_*
+cli_v2.22.0
