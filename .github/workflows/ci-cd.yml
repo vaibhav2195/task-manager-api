@@ -38,21 +38,19 @@ jobs:
         run: |
           pytest --cov=app --cov-report=xml --cov-report=term-missing
 
-      - name: Upload Coverage to Artifacts
+      - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage.xml
 
-  build-and-push:
-    name: Build & Push Docker Image
+  build-and-verify:
+    name: Build Docker Image (GHCR)
     needs: lint-and-test
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-    outputs:
-      image-tag: ${{ steps.meta.outputs.version }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -76,7 +74,7 @@ jobs:
             type=raw,value=latest
             type=sha,format=short
 
-      - name: Build and Push Docker Image
+      - name: Build and Push Container Image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -87,33 +85,36 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  deploy:
-    name: Automated Deployment
-    needs: build-and-push
+  render-auto-deploy:
+    name: Render Continuous Deployment
+    needs: build-and-verify
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy to Cloud (Render / Webhook / AWS ECS)
+      - name: Notify Deployment Status
         run: |
-          echo "Initiating automated zero-downtime deployment..."
+          echo "=========================================================================="
+          echo "Render Zero-Card Auto-Deploy Triggered via Git Integration & render.yaml"
+          echo "Render auto-deploys automatically on every push to main branch."
+          echo "=========================================================================="
+          
           if [ -n "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" ]; then
-            echo "Triggering Render deployment hook..."
+            echo "Optional RENDER_DEPLOY_HOOK_URL present. Triggering deploy hook..."
             curl -s -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
           else
-            echo "RENDER_DEPLOY_HOOK_URL not configured. Image successfully pushed to ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+            echo "Render standard Blueprint Git auto-deploy active."
           fi
 
       - name: Run Automated Health Check Post-Deploy
         run: |
-          echo "Executing health check verification..."
           chmod +x scripts/health_check.sh
-          # Run health check against live target if URL set
           TARGET_URL="${{ secrets.LIVE_API_URL }}"
           if [ -n "$TARGET_URL" ]; then
+            echo "Running health check on live URL: $TARGET_URL"
             ./scripts/health_check.sh "$TARGET_URL"
           else
-            echo "LIVE_API_URL secret not set. Skipping remote health check."
+            echo "LIVE_API_URL secret not specified; skipping remote health ping."
           fi

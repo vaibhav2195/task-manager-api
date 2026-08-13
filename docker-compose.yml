@@ -12,37 +12,14 @@ services:
       - ENVIRONMENT=development
       - REPOSITORY_TYPE=sqlite
       - SQLITE_DB_PATH=/app/data/tasks.db
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/taskdb
     volumes:
       - task_data:/app/data
-    depends_on:
-      db:
-        condition: service_healthy
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 10s
       timeout: 5s
-      retries: 5
-
-  db:
-    image: postgres:16-alpine
-    container_name: task_manager_db
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=taskdb
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      retries: 3
 
 volumes:
   task_data:
-  postgres_data:
