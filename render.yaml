@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: task-manager-api
+    env: docker
+    plan: free
+    region: oregon
+    dockerfilePath: Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: REPOSITORY_TYPE
+        value: sqlite
+      - key: SQLITE_DB_PATH
+        value: /tmp/tasks.db
