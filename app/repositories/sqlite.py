@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 import sqlite3
 from typing import List, Optional
@@ -11,6 +12,9 @@ class SQLiteTaskRepository(BaseTaskRepository):
 
     def __init__(self, db_path: str = "tasks.db"):
         self.db_path = db_path
+        parent_dir = os.path.dirname(os.path.abspath(self.db_path))
+        if parent_dir:
+            os.makedirs(parent_dir, exist_ok=True)
         self._init_db()
 
     def _get_connection(self) -> sqlite3.Connection:

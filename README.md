@@ -13,10 +13,10 @@ A production-style **Task Manager REST API** built with Python and **FastAPI** u
 
 ## 🌐 Live Application Deployment (Render Free Tier)
 
-- **Live Public API URL:** `https://task-manager-api-cloud.onrender.com`
-- **Interactive Swagger Docs:** `https://task-manager-api-cloud.onrender.com/docs`
-- **Health Check Endpoint:** `https://task-manager-api-cloud.onrender.com/health`
-- **Prometheus Metrics:** `https://task-manager-api-cloud.onrender.com/metrics`
+- **Live Public API URL:** `https://task-manager-api-l6ne.onrender.com`
+- **Interactive Swagger Docs:** `https://task-manager-api-l6ne.onrender.com/docs`
+- **Health Check Endpoint:** `https://task-manager-api-l6ne.onrender.com/health`
+- **Prometheus Metrics:** `https://task-manager-api-l6ne.onrender.com/metrics`
 
 ---
 
