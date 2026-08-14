@@ -40,6 +40,9 @@ ENV ENVIRONMENT=production
 # Copy application source code
 COPY --chown=appuser:appgroup app /app/app
 
+# Create data directory and set proper ownership
+RUN mkdir -p /app/data && chown -R appuser:appgroup /app
+
 # Switch to non-root user
 USER appuser
 

@@ -13,4 +13,4 @@ services:
       - key: REPOSITORY_TYPE
         value: sqlite
       - key: SQLITE_DB_PATH
-        value: /app/tasks.db
+        value: /app/data/tasks.db
