@@ -38,4 +38,8 @@ Thumbs.db
 
 # Binaries / Render CLI
 cli_*
+
+# Vercel
+.vercel
 cli_v2.22.0
+.vercel
