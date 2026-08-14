@@ -1,7 +1,9 @@
+import os
 from datetime import datetime, timezone
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 from app.api.dependencies import get_repository
 from app.api.routes import router as tasks_router
 from app.config import settings
@@ -64,6 +66,18 @@ async def repository_error_handler(request: Request, exc: RepositoryError):
 
 
 # System Endpoints
+if os.path.exists("static"):
+    app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+@app.get("/", include_in_schema=False)
+def read_root():
+    """Serve TaskFlow Pro Single Page Application (SPA)."""
+    if os.path.exists("static/index.html"):
+        return FileResponse("static/index.html")
+    return {"message": "Task Manager REST API is running. Visit /docs for Swagger UI."}
+
+
 @app.get("/health", tags=["System"])
 def health_check():
     """Health check endpoint validating application and repository status."""

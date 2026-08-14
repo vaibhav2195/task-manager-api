@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow Pro — Production REST API & Task Manager</title>
+    <meta name="description" content="High-performance Task Manager powered by FastAPI, OOP Repository Pattern, and CI/CD Pipeline.">
+    
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Background Glow Elements -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <div class="app-container">
+        <!-- Sidebar / Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>TaskFlow <span>Pro</span></h1>
+                    <span class="version-badge">v1.0.0</span>
+                </div>
+            </div>
+
+            <div class="server-status-card" id="serverStatusCard">
+                <div class="status-indicator online" id="statusIndicator"></div>
+                <div class="status-info">
+                    <span class="status-label">System Health</span>
+                    <span class="status-value" id="statusValue">Checking...</span>
+                </div>
+                <button class="refresh-btn" id="refreshHealthBtn" title="Refresh Health Check">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                </button>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-item active" data-filter-status="all">
+                    <i class="fa-solid fa-inbox"></i> All Tasks
+                    <span class="nav-count" id="countAll">0</span>
+                </button>
+                <button class="nav-item" data-filter-status="active">
+                    <i class="fa-solid fa-circle-notch"></i> Active
+                    <span class="nav-count" id="countActive">0</span>
+                </button>
+                <button class="nav-item" data-filter-status="completed">
+                    <i class="fa-solid fa-circle-check"></i> Completed
+                    <span class="nav-count" id="countCompleted">0</span>
+                </button>
+            </nav>
+
+            <div class="priority-section">
+                <h3><i class="fa-solid fa-layer-group"></i> Filter Priority</h3>
+                <div class="priority-filters">
+                    <button class="priority-btn active" data-priority="all">All</button>
+                    <button class="priority-btn priority-high" data-priority="high">High</button>
+                    <button class="priority-btn priority-medium" data-priority="medium">Med</button>
+                    <button class="priority-btn priority-low" data-priority="low">Low</button>
+                </div>
+            </div>
+
+            <div class="quick-links">
+                <a href="/docs" target="_blank" class="link-btn">
+                    <i class="fa-solid fa-code"></i> Swagger API Docs
+                </a>
+                <a href="/metrics" target="_blank" class="link-btn">
+                    <i class="fa-solid fa-chart-line"></i> Prometheus Metrics
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Bar -->
+            <header class="header-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="Search tasks by title or description...">
+                </div>
+
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="openCreateModalBtn">
+                        <i class="fa-solid fa-plus"></i> New Task
+                    </button>
+                </div>
+            </header>
+
+            <!-- Metrics Summary Cards -->
+            <section class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon total">
+                        <i class="fa-solid fa-tasks"></i>
+                    </div>
+                    <div class="metric-data">
+                        <span class="metric-title">Total Tasks</span>
+                        <h2 class="metric-number" id="metricTotal">0</h2>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon active">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div class="metric-data">
+                        <span class="metric-title">Pending</span>
+                        <h2 class="metric-number" id="metricPending">0</h2>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon completed">
+                        <i class="fa-solid fa-check-double"></i>
+                    </div>
+                    <div class="metric-data">
+                        <span class="metric-title">Completed Rate</span>
+                        <h2 class="metric-number" id="metricRate">0%</h2>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon high-prio">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="metric-data">
+                        <span class="metric-title">High Priority</span>
+                        <h2 class="metric-number" id="metricHigh">0</h2>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Task List Section -->
+            <section class="task-section">
+                <div class="section-header">
+                    <h2 id="sectionTitle">All Tasks</h2>
+                    <div class="sort-select-wrapper">
+                        <i class="fa-solid fa-arrow-down-short-wide"></i>
+                        <select id="sortSelect">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="priority">Priority (High to Low)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="task-list" id="taskList">
+                    <!-- Task items injected dynamically via app.js -->
+                    <div class="loading-state">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i>
+                        <p>Loading tasks from REST API...</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Create Task Modal -->
+    <div class="modal-overlay" id="createModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-plus-circle"></i> Create New Task</h3>
+                <button class="close-modal-btn" id="closeCreateModalBtn">&times;</button>
+            </div>
+            <form id="createTaskForm">
+                <div class="form-group">
+                    <label for="createTitle">Task Title *</label>
+                    <input type="text" id="createTitle" required placeholder="e.g., Deploy FastAPI application to Render" maxlength="200">
+                </div>
+
+                <div class="form-group">
+                    <label for="createDescription">Description</label>
+                    <textarea id="createDescription" rows="3" placeholder="Add detailed instructions, context, or requirements..." maxlength="1000"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="createPriority">Priority Level</label>
+                    <select id="createPriority">
+                        <option value="low">Low Priority</option>
+                        <option value="medium" selected>Medium Priority</option>
+                        <option value="high">High Priority</option>
+                    </select>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelCreateBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-paper-plane"></i> Save Task
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Task Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-pen-to-square"></i> Edit Task</h3>
+                <button class="close-modal-btn" id="closeEditModalBtn">&times;</button>
+            </div>
+            <form id="editTaskForm">
+                <input type="hidden" id="editTaskId">
+                
+                <div class="form-group">
+                    <label for="editTitle">Task Title *</label>
+                    <input type="text" id="editTitle" required maxlength="200">
+                </div>
+
+                <div class="form-group">
+                    <label for="editDescription">Description</label>
+                    <textarea id="editDescription" rows="3" maxlength="1000"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="editPriority">Priority</label>
+                        <select id="editPriority">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group half">
+                        <label for="editCompleted">Status</label>
+                        <select id="editCompleted">
+                            <option value="false">Active / Pending</option>
+                            <option value="true">Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-check"></i> Update Task
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

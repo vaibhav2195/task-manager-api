@@ -37,8 +37,9 @@ ENV PATH="/opt/venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
 ENV ENVIRONMENT=production
 
-# Copy application source code
+# Copy application source code and static assets
 COPY --chown=appuser:appgroup app /app/app
+COPY --chown=appuser:appgroup static /app/static
 
 # Create data directory and set proper ownership
 RUN mkdir -p /app/data && chown -R appuser:appgroup /app
