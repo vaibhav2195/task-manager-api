@@ -11,8 +11,9 @@ A production-style **Task Manager REST API** built with Python and **FastAPI** u
 
 ---
 
-## 🌐 Live Application Deployment (Render Free Tier)
+## 🌐 Live Application & Web Dashboard Deployment (Render Free Tier)
 
+- **Live Web Application (Frontend):** `https://task-manager-api-l6ne.onrender.com/`
 - **Live Public API URL:** `https://task-manager-api-l6ne.onrender.com`
 - **Interactive Swagger Docs:** `https://task-manager-api-l6ne.onrender.com/docs`
 - **Health Check Endpoint:** `https://task-manager-api-l6ne.onrender.com/health`
